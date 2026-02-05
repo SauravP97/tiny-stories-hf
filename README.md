@@ -18,7 +18,7 @@ The goal of this project is to demonstrate that a very small transformer model, 
 
 This model is a decoder-only Transformer (GPT-style) designed to fit within 10M trainable parameters.
 
-### Configuration 1: Model Size `XS` (3.6M)
+### Configuration 1: Model Size `XS` (3.6M) - [HuggingFace](https://huggingface.co/SauravP97/tiny-stories-3M)
 
 | Hyperparameter | Value |
 | :--- | :--- |
@@ -30,6 +30,20 @@ This model is a decoder-only Transformer (GPT-style) designed to fit within 10M 
 | **Vocab Size** | ~50,257 (GPT-Neo tokenizer) |
 | **Dropout** | 0.1 |
 | **Learning Rate** | 5e-4 |
+
+## 🚀 Training Procedure
+
+### Configuration 1: Model Size `XS` (3.6M)
+
+The model was trained from scratch on a **NVIDIA T4** GPU for around `3` hours to achieve a loss of `2.17`. The model was trained for `0.22` epochs estimating around `55K` steps. We used **EleutherAI/gpt-neo-125M** tokenizer model training and inference.
+
+- Training Hyper-parameters
+    - Training regime:
+    - Epochs: 0.22
+    - Loss: 2.17
+    - GPU: NVIDIA T4
+    - Training Steps: 55,000
+    - Training Time: ~3 hours
 
 ## 📚 Dataset
 
