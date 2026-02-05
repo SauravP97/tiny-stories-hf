@@ -12,6 +12,18 @@ The goal of this project is to demonstrate that a very small transformer model, 
 
 ## :star2: Inference
 
+### On UI
+
+![web-ui](./media/ui.gif)
+
+Execute the Flask server:
+```
+python app.py
+```
+
+Head-over to the Local Server end-point in your browser to talk to the model.
+
+### In Terminal
 ```python
 cd tiny-stories-with-hf
 python inference.py "<YOUR_PROMPT_HERE>"

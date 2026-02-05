@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Stream Chat</title>
+    <style>
+        :root {
+            --bg-color: #343541;
+            --chat-bg: #444654;
+            --text-color: #ececf1;
+            --input-bg: #40414f;
+            --border-color: #565869;
+        }
+
+        body {
+            margin: 0; font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color); color: var(--text-color);
+            display: flex; flex-direction: column; height: 100vh;
+        }
+
+        #chat-container { flex: 1; overflow-y: auto; padding-bottom: 50px; }
+
+        .message { padding: 25px; display: flex; justify-content: center; }
+        .message.bot { background-color: var(--chat-bg); }
+        
+        .message-content { 
+            max-width: 800px; width: 100%; display: flex; gap: 20px; 
+            line-height: 1.6; white-space: pre-wrap; /* Preserves formatting */
+        }
+
+        .avatar {
+            width: 32px; height: 32px; border-radius: 4px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; flex-shrink: 0;
+        }
+        .user-avatar { background: #5436DA; }
+        .bot-avatar { background: #19C37D; }
+
+        #input-area {
+            padding: 30px; background: linear-gradient(transparent, var(--bg-color) 20%);
+            display: flex; justify-content: center;
+        }
+
+        .input-wrapper {
+            max-width: 800px; width: 100%; position: relative;
+            background: var(--input-bg); border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+
+        #user-input {
+            width: 100%; background: transparent; border: none; color: white;
+            padding: 14px 45px 14px 16px; font-size: 1rem; outline: none;
+            box-sizing: border-box;
+        }
+
+        #send-btn {
+            position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+            background: none; border: none; color: #acacbe; cursor: pointer;
+        }
+        #header {
+            background-color: #202123;
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .control-panel {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+        .details-card {
+            background: #3e3f4b;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            flex: 1;
+            border: 1px solid var(--border-color);
+        }
+        .selector-group select {
+            background: var(--input-bg);
+            color: white;
+            border: 1px solid var(--border-color);
+            padding: 5px;
+            border-radius: 4px;
+        }
+        #model-select option {
+            font-family: 'Inter', sans-serif;
+            font-size: 20px;
+            background-color: #343541;
+            color: white;
+            font-size: 1.1rem;
+        }
+        #model-details {
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="header">
+    <div class="control-panel">
+        <div class="selector-group">
+            <label for="model-select">Model Size:</label>
+            <select id="model-select">
+                <option value="3M">TinyStories-3M</option>
+                <option value="35M" disabled>TinyStories-35M</option>
+                <option value="76M" disabled>TinyStories-76M</option>
+                <option value="135M" disabled>TinyStories-135M</option>
+            </select>
+        </div>
+        <div id="model-details" class="details-card">
+            <strong>Architecture:</strong> <span id="arch-text">Loading...</span><br>
+            <strong>Capabilities:</strong> <span id="cap-text">Loading...</span>
+        </div>
+    </div>
+</div>
+
+<div id="chat-container"></div>
+
+<div id="input-area">
+    <div class="input-wrapper">
+        <input type="text" id="user-input" placeholder="Message your model..." autocomplete="off">
+        <button id="send-btn">➔</button>
+    </div>
+</div>
+
+<script>
+    const modelData = {
+        "3M": { 
+            arch: "8 layers, 64 hidden dim", 
+            cap: "Basic grammar, very simple short stories." 
+        },
+        "35M": { 
+            arch: "8 layers, 128 hidden dim", 
+            cap: "Consistent character names, simple plot progression." 
+        },
+        "76M": { 
+            arch: "8 layers, 256 hidden dim", 
+            cap: "Better vocabulary, handles nested sentences." 
+        },
+        "135M": { 
+            arch: "8 layers, 512 hidden dim", 
+            cap: "Complex narrative structures and emotional depth." 
+        }
+    };
+
+    const modelSelect = document.getElementById('model-select');
+    const archText = document.getElementById('arch-text');
+    const capText = document.getElementById('cap-text');
+
+    modelSelect.addEventListener('change', updateDetails);
+    updateDetails(); // Initial call
+
+    function updateDetails() {
+        const info = modelData[modelSelect.value];
+        archText.innerText = info.arch;
+        capText.innerText = info.cap;
+    }
+
+    const chatContainer = document.getElementById('chat-container');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+
+    function createMessageRow(role) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `message ${role}`;
+        msgDiv.innerHTML = `
+            <div class="message-content">
+                <div class="avatar ${role}-avatar">${role === 'user' ? 'U' : 'AI'}</div>
+                <div class="text-target"></div>
+            </div>
+        `;
+        chatContainer.appendChild(msgDiv);
+        return msgDiv.querySelector('.text-target');
+    }
+
+    async function handleChat() {
+        const prompt = userInput.value.trim();
+        const selectedModel = modelSelect.value;
+
+        if (!prompt) return;
+
+        // 1. Add User Message
+        const userDisplay = createMessageRow('user');
+        userDisplay.innerText = prompt;
+        userInput.value = '';
+
+        // 2. Prepare Bot Message Placeholder
+        const botDisplay = createMessageRow('bot');
+        botDisplay.innerHTML = "<em>Typing...</em>";
+
+        try {
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    message: prompt,
+                    model_size: selectedModel
+                })
+            });
+
+            if (!response.ok) throw new Error("Server error");
+
+            // 3. Setup Stream Reader
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            botDisplay.innerText = ""; // Clear the "Typing..." placeholder
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                // Decode the byte chunk and append text
+                const chunk = decoder.decode(value, { stream: true });
+                botDisplay.innerText += chunk;
+                
+                // Auto-scroll
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+        } catch (err) {
+            botDisplay.innerText = "Error: " + err.message;
+        }
+    }
+
+    sendBtn.onclick = handleChat;
+    userInput.onkeydown = (e) => { if(e.key === 'Enter') handleChat(); };
+</script>
+
+</body>
+</html>
