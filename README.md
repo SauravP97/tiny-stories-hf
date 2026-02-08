@@ -37,7 +37,7 @@ python inference.py "<YOUR_PROMPT_HERE>"
 
 This model is a decoder-only Transformer (GPT-style) designed to fit within 10M trainable parameters.
 
-### Configuration 1: Model Size `XS` (3.6M) - [HuggingFace](https://huggingface.co/SauravP97/tiny-stories-3M)
+### Configuration 1: Model Size `S` (3.6M) - [HuggingFace](https://huggingface.co/SauravP97/tiny-stories-3M)
 
 | Hyperparameter | Value |
 | :--- | :--- |
@@ -50,9 +50,22 @@ This model is a decoder-only Transformer (GPT-style) designed to fit within 10M 
 | **Dropout** | 0.1 |
 | **Learning Rate** | 5e-4 |
 
+### Configuration 2: Model Size `M` (19.3M) - [HuggingFace](https://huggingface.co/SauravP97/tiny-stories-19M)
+
+| Hyperparameter | Value |
+| :--- | :--- |
+| **Parameters** | **~19.3 Million** |
+| **Attention Layers** | 8 |
+| **Hidden Dimension (Embedding Dimensions)** | 256 |
+| **Attention Heads per Layer** | 16 |
+| **Context Window** | 512 tokens |
+| **Vocab Size** | ~50,257 (GPT-Neo tokenizer) |
+| **Dropout** | 0.1 |
+| **Learning Rate** | 5e-4 |
+
 ## 🚀 Training Procedure
 
-### Configuration 1: Model Size `XS` (3.6M)
+### Configuration 1: Model Size `S` (3.6M)
 
 The model was trained from scratch on a **NVIDIA T4** GPU for around `3` hours to achieve a loss of `2.17`. The model was trained for `0.22` epochs estimating around `55K` steps. We used **EleutherAI/gpt-neo-125M** tokenizer model training and inference.
 
@@ -63,6 +76,18 @@ The model was trained from scratch on a **NVIDIA T4** GPU for around `3` hours t
     - GPU: NVIDIA T4
     - Training Steps: 55,000
     - Training Time: ~3 hours
+
+### Configuration 2: Model Size `M` (19.3M)
+
+The model was trained from scratch on a **NVIDIA A100** GPU for around `4` hours `40` minutes to achieve a loss of `1.40`. The model was trained for `1` epoch estimating around `265K` steps. We used **EleutherAI/gpt-neo-125M** tokenizer model training and inference.
+
+- Training Hyper-parameters
+    - Training regime:
+    - Epochs: 1
+    - Loss: 1.40
+    - GPU: NVIDIA A100
+    - Training Steps: 264,965
+    - Training Time: ~4 hours 40 minutes
 
 ## 📚 Dataset
 
