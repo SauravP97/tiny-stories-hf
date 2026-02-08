@@ -1,3 +1,4 @@
+import logging
 import time
 from transformers import AutoTokenizer, AutoModelForCausalLM, TextIteratorStreamer
 from threading import Thread  # Import Thread for concurrent execution
@@ -7,14 +8,25 @@ tokenizer = AutoTokenizer.from_pretrained("EleutherAI/gpt-neo-125M")
 tokenizer.pad_token = tokenizer.eos_token
 
 # Load model from hugging face
-model_id = 'SauravP97/tiny-stories-3M'
-pretrained_model = AutoModelForCausalLM.from_pretrained(model_id)
+model_id_3m = 'SauravP97/tiny-stories-3M'
+model_id_19m = 'SauravP97/tiny-stories-19M'
+pretrained_model_3M = AutoModelForCausalLM.from_pretrained(model_id_3m)
+pretrained_model_19M = AutoModelForCausalLM.from_pretrained(model_id_19m)
 
 # Move model to evaluation mode
-pretrained_model.eval()
+pretrained_model_3M.eval()
+pretrained_model_19M.eval()
 
-def stream_inference(prompt: str):
-    # Prompt with a typical TinyStories opening
+def stream_inference(prompt: str, model_size: str):
+    if model_size == "3M":
+        logging.info("Using 3M model for inference")
+        pretrained_model = pretrained_model_3M
+    elif model_size == "19M":
+        logging.info("Using 19M model for inference")
+        pretrained_model = pretrained_model_19M
+    else:
+        raise ValueError(f"Unsupported model size: {model_size}")
+    
     inputs = tokenizer(prompt, return_tensors="pt").to(pretrained_model.device)
 
     streamer = TextIteratorStreamer(tokenizer, skip_prompt=False, skip_special_tokens=True)

@@ -107,7 +107,7 @@
             <label for="model-select">Model Size:</label>
             <select id="model-select">
                 <option value="3M">TinyStories-3M</option>
-                <option value="35M" disabled>TinyStories-35M</option>
+                <option value="19M">TinyStories-19M</option>
                 <option value="76M" disabled>TinyStories-76M</option>
                 <option value="135M" disabled>TinyStories-135M</option>
             </select>
@@ -134,12 +134,12 @@
             arch: "8 layers, 64 hidden dim", 
             cap: "Basic grammar, very simple short stories." 
         },
-        "35M": { 
-            arch: "8 layers, 128 hidden dim", 
+        "19M": { 
+            arch: "8 layers, 256 hidden dim", 
             cap: "Consistent character names, simple plot progression." 
         },
         "76M": { 
-            arch: "8 layers, 256 hidden dim", 
+            arch: "8 layers, 512 hidden dim", 
             cap: "Better vocabulary, handles nested sentences." 
         },
         "135M": { 

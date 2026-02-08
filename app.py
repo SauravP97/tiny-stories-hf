@@ -22,7 +22,7 @@ def chat():
     try:
         def generate():
             # Iterate over the generator from your inference script
-            for token in stream_inference(user_input):
+            for token in stream_inference(user_input, model_size):
                 # We wrap the token in a JSON structure or send raw text
                 # Sending raw text is often easier for simple streams
                 yield token.encode('utf-8')
