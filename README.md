@@ -6,7 +6,7 @@
 
 This repository contains a reproduction of the **TinyStories** language models described in the paper [**"TinyStories: How Small Can Language Models Be and Still Speak Coherent English?"**](https://arxiv.org/abs/2305.07759) by Ronen Eldan and Yuanzhi Li.
 
-![Paper Front](./media/paper-front.png)
+![Paper Front](./media/front.png)
 
 The goal of this project is to demonstrate that a very small transformer model, when trained on a simplified, synthetic dataset, can generate fluent, grammatically correct, and consistent short stories.
 
