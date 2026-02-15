@@ -89,7 +89,7 @@ The model was trained from scratch on a **NVIDIA A100** GPU for around `4` hours
     - Training Steps: 264,965
     - Training Time: ~4 hours 40 minutes
 
-## Playing with 19M parameter model
+## :surfer: Playing with 19M parameter model
 
 ![sample chats 19M](./media/test-chats-19m-1.png)
 ![sample chats 19M](./media/test-chats-19m-2.png)
