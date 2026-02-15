@@ -92,6 +92,7 @@ The model was trained from scratch on a **NVIDIA A100** GPU for around `4` hours
 ## Playing with 19M parameter model
 
 ![sample chats 19M](./media/test-chats-19m-1.png)
+![sample chats 19M](./media/test-chats-19m-2.png)
 
 ## 📚 Dataset
 
